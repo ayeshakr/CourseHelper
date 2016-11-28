@@ -14,8 +14,20 @@ body {
   background-image: url(img/background1.jpg); ;
   -webkit-background-size: cover;
   background-size: cover;
-  background-color: rgb(0,0,0,6);
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-color: rgb(0,0,0,0.6);
+  background-position: right-top;
+  background-attachment: fixed;
+  background-attachment: fixed;
+
 }
+
+#overlay {
+  background-color: rgb(0,0,0,0.6);
+  opacity: 0.7;
+}
+
 article,
 aside,
 details,
@@ -26,7 +38,10 @@ header,
 hgroup,
 main,
 menu,
-nav,
+nav {
+  background: transparent;
+}
+
 section,
 summary {
   display: block;
@@ -1599,6 +1614,7 @@ pre code {
   display:table;
   width: 40%;
   padding: 0;
+  background-color: transparent;
 }
  
 .row-fluid {height: 100%; display:table-cell; vertical-align: middle;}
@@ -2576,6 +2592,7 @@ output {
   line-height: 1.42857143;
   color: #555;
   background-color: #fff;
+  opacity: 0.8;
   background-image: none;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -2651,6 +2668,7 @@ input[type="search"] {
 }
 .form-group {
   margin-bottom: 15px;
+  color: white;
 }
 .radio,
 .checkbox {
@@ -3039,8 +3057,8 @@ select[multiple].input-lg {
       -ms-user-select: none;
           user-select: none;
   background-image: none;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  border: 2px solid transparent;
+  border-radius: 1px;
 }
 .btn:focus,
 .btn:active:focus,
@@ -3081,6 +3099,11 @@ fieldset[disabled] a.btn {
   color: #333;
   background-color: #fff;
   border-color: #ccc;
+}
+.btn-transp {
+  color: white;
+  background-color: transparent;
+  border-color: white;
 }
 .btn-default:focus,
 .btn-default.focus {
@@ -5470,14 +5493,15 @@ button.list-group-item-danger.active:focus {
 }
 .panel {
   margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid transparent;
-  border-radius: 4px;
+  background-color: transparent;
+  border: 3px solid white;
+  border-radius: 0px;
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
           box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
 }
 .panel-body {
   padding: 15px;
+  color: white;
 }
 .panel-heading {
   padding: 10px 15px;
