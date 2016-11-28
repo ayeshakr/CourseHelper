@@ -85,11 +85,10 @@ def add_entry():
     	flash('aborting!')
         abort(401)
     #db = get_db()
-    print (request.form['pass'])
     g.db.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [request.form['user'] , request.form['email'], request.form['pass']])
     g.db.commit()
     #print ('New entry was successfully posted')
-    return redirect(url_for('/'))
+    return render_template("loggedin_home.html", username=str(request.form['user']))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
