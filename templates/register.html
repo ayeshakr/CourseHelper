@@ -85,6 +85,9 @@
             <div class="panel">
               <div class="panel-body">
         <h2>User Registration</h2><br>
+        {% if error %}
+              {{error}}
+              {% endif %}<br><br>
                 <form id="reg" method="post" class="form-horizontal" action="/add">
                   <div class="form-group">
                     <label class="col-md-4 control-label">Username</label>

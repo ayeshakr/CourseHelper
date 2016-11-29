@@ -34,6 +34,9 @@
             <div class="panel">
               <div class="panel-body">
               <h2>Welcome to CourseHelper!</h2><br>
+              {% if error %}
+              {{error}}
+              {% endif %} <br><br>
                 <form id="login" method="post" class="form-horizontal" action="/login">
                   <div class="form-group">
                     <label class="col-md-4 control-label">Username</label>
