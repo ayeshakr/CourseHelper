@@ -8,36 +8,57 @@
   </head>
   <body>
     <nav class="navbar navbar-inverse">
-      <div class="container">
+      <div class="container-fluid-orig">
         <div class="navbar-header">
             <!--<a class="navbar-brand" href="#">
             <img alt="Brand" src="{{ url_for('static',filename='img/letter-C-blue-icon.png') }}">
             </a>-->
-            <div class="navbar-left">
             <a class="navbar-brand" href="#">CourseHelper</a>
-        </div></div>
+        </div>
       <ul class="nav navbar-nav">
-        <li class="active"> <a href="#"/>COMP 307 <span class="sr-only">(current)</span></a></li>
-        <li><a href="#">Course Feed</a></li>
-        <li><a href="#">Reviews</a></li>
+        <li class="active"><a href="#">Course Feed <span class="sr-only">(current)</span></a></li>
         <li><a href="#">Resources</a></li>
-        </ul>
-      </div>
-    </nav>
+        <li><a href="#">Reviews</a></li>
+      </ul>
+      <form id="searchform" class="navbar-form" role="search" onsubmit="return onSubmitSearch()">
+        <div class="form-group" style="display: inline;">
+          <input type="text"  id="searchtxt" class="form-control" placeholder="Search">
+        </div>
+          <button type="submit" class="btn-orig btn-default">Submit</button>
+        </form>
+      <form class="navbar-form navbar-right" role="logout" action="/logout">
+        <div class="form-group">
+          <button type="submit" class="btn-orig btn-default">Logout </button>
+        </div>
+      </form>
+    </div>
+  </nav>
+  <script type="text/javascript">
+      function onSubmitSearch()
+      {
+         var x = document.getElementById("searchtxt").value;
+         var str1 = "/courses/";
+         var query = str1.concat(x);
+         // console.log(query);
+         document.getElementById("searchform").action = str1.concat(x);
+         return true;
+        }
+  </script>
     <div class="body-container">
       <div class="container-fluid-cr">
         <div class="row-fluid">
-            <h2> {{coursetitle}} </h2>
+            <h2> {{ coursetitle }} </h2>
             <h4> {{ coursedesc }} </h4>
             <div class="panel">
               <div class="panel-body">
                 <h3><u>Course Feed</u></h3>
                   <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span><small> Add a post </small></h2>
                   <div class="panel-transp">
-                  <form id="reg" method="post" class="form-horizontal">
+                  <form id="reg" method="post" class="form-horizontal" action="/addpost">
 
                     <div class="form-group">
                       <input type="text" name="post" class="form-control input-lg" id="inputlg" class="form-control">
+                      <input type="hidden" name="courseid" value="{{ courseid }}">
                     </div>
                     <div class="form-group">
                       <input type="submit" class="btn btn-transp" value="Submit">
@@ -48,7 +69,7 @@
                 {% for post in posts %}
                 <div class="panel-small">
                   <div class="panel-body">
-                    <h4>Posted by <a href="#">{{ post.user }} </a><small>{{ post.timestamp }}</small></h4>
+                    <h4>Posted by <a href="#">{{ post.userid }} </a><small>{{ post.tstamp }}</small></h4>
                     <h4> {{ post.post}} </h4>
                   </div>
                 </div>
