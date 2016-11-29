@@ -43,12 +43,28 @@
          document.getElementById("searchform").action = str1.concat(x);
          return true;
         }
+
+        function toggleFollow() {
+          if (document.getElementById("followbtn").value=="Follow this course") {
+            document.getElementById("followbtn").className = "btn-orig btn-sm btn-danger";
+            document.getElementById("followbtn").value = "Unfollow this course";
+          } else {
+            document.getElementById("followbtn").className = "btn-orig btn-sm btn-success";
+            document.getElementById("followbtn").value = "Follow this course";
+          }
+          return true;
+        }
   </script>
     <div class="body-container">
       <div class="container-fluid-cr">
         <div class="row-fluid">
-            <h2> {{ coursetitle }} </h2>
-            <h4> {{ coursedesc }} </h4>
+            <h2> {{ coursetitle }} <br><small>
+             {{ coursedesc }} </small></h2>
+            <form name="followform">
+              <div class="form-group">
+                <input type="button" class="btn-orig btn-success btn-sm" value="Follow this course" id="followbtn" onclick="toggleFollow()">
+              </div>
+            </form>
             <div class="panel">
               <div class="panel-body">
                 <h3><u>Course Feed</u></h3>
