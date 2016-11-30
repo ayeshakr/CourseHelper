@@ -61,7 +61,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/courses/<courseid>')
+@app.route('/courses/<courseid>/')
 def coursepage(courseid):
     #print "Course ID is = " + courseid
 
@@ -109,3 +109,18 @@ def addPost():
         return redirect(url_for('coursepage', courseid=courseid))
 
 
+@app.route('/courses/<courseid>/reviews')
+def reviewspage(courseid):
+    
+    courseInfo = navigation.getCourseInfo(courseid)
+
+    #print courseInfo
+
+    # If no course was found, return user to their main profile page
+    if not courseInfo:
+        return render_template("loggedin_home.html", username=session['username'])
+
+    # If a valid course was entered, fetch the posts associated with it and render its page
+    else:
+        coursePosts = navigation.getCoursePosts(courseid)
+        return render_template("reviews.html", courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'])

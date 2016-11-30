@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>IDK</title>
     <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='bootstrap.css') }}">
-    <!--<link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/user-reg.css') }}">-->
+    <link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='user-reg.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename='star-rating.css')}}" media="all" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{{url_for('static', filename='star-rating.js') }}" type="text/javascript"></script>
   </head>
   <body>
     <nav class="navbar navbar-inverse">
@@ -16,9 +20,9 @@
             <a class="navbar-brand" href="#">CourseHelper</a>
         </div>
       <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Course Feed <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Course Feed </a></li>
         <li><a href="#">Resources</a></li>
-        <li><a href="reviews">Reviews</a></li>
+        <li class="active"><a href="/reviews">Reviews<span class="sr-only">(current)</span></a></li>
       </ul>
       <form id="searchform" class="navbar-form" role="search" onsubmit="return onSubmitSearch()">
         <div class="form-group" style="display: inline;">
@@ -55,7 +59,7 @@
           return true;
         }
   </script>
-    <div class="body-container">
+  <div class="body-container">
       <div class="container-fluid-cr">
         <div class="row-fluid">
             <h2> {{ coursetitle }} <br><small>
@@ -68,13 +72,15 @@
             </form>
             <div class="panel">
               <div class="panel-body">
-                <h3><u>Course Feed</u></h3>
-                  <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span><small> Add a post </small></h2>
+                <h3><u>Reviews</u></h3>
+                  <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span><small> Add a review - Let people know what you think of this course! Reviews are anonymous. </small></h2>
                   <div class="panel-transp">
-                  <form id="reg" method="post" class="form-horizontal" action="/addpost">
+                  <form id="reg" method="post" class="form-horizontal" action="/addreview">
 
                     <div class="form-group">
                       <input type="text" name="post" class="form-control input-lg" id="inputlg" class="form-control">
+                      <input id="input-21d" value="2" type="number" class="rating" min=0 max=5 step=0.5 data-size="sm">
+                      <hr>
                       <input type="hidden" name="courseid" value="{{ courseid }}">
                     </div>
                     <div class="form-group">
@@ -83,11 +89,10 @@
 
                     </form>
                     </div>
-                {% for post in posts %}
+                {% for review in reviews %}
                 <div class="panel-small">
                   <div class="panel-body">
-                    <h4>Posted by <a href="#">{{ post.userid }} </a><small>{{ post.tstamp }}</small></h4>
-                    <h4> {{ post.post}} </h4>
+                    <h4>{{ review.text}}<br><small>{{ review.tstamp }}</small></h4>
                   </div>
                 </div>
                 {% endfor %}
@@ -99,6 +104,4 @@
     </div>
   </body>
 </html>
-
-
 

@@ -11,7 +11,7 @@
       {
          var search = document.getElementById("searchtxt");
          var str1 = "/courses/";
-         document.searchform.action = str1.concat(search);
+         document.searchform.action = str1.concat(search,"/");
          return true;
         }
     </script>
@@ -50,7 +50,7 @@
          var str1 = "/courses/";
          var query = str1.concat(x);
          // console.log(query);
-         document.getElementById("searchform").action = str1.concat(x);
+         document.getElementById("searchform").action = str1.concat(x,"/");
          return true;
         }
     </script>
