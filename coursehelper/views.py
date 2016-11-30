@@ -61,7 +61,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/courses/<courseid>/')
+@app.route('/courses/<courseid>/', methods=['GET','POST'])
 def coursepage(courseid):
     #print "Course ID is = " + courseid
 
@@ -76,8 +76,9 @@ def coursepage(courseid):
 
     # If a valid course was entered, fetch the posts associated with it and render its page
     else:
+        # added following=False for testing - remove and replace with info from DB instead
         coursePosts = navigation.getCoursePosts(courseid)
-        return render_template("coursepg.html", courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'], posts=coursePosts)
+        return render_template("coursepg.html", following=False, courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'], posts=coursePosts)
 
     return render_template("loggedin_home.html", username=session['username'])
     
@@ -124,3 +125,10 @@ def reviewspage(courseid):
     else:
         coursePosts = navigation.getCoursePosts(courseid)
         return render_template("reviews.html", courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'])
+
+@app.route('/followcourse', methods=['GET','POST'])
+def followcourse():
+    #test fn
+    print request.form['wantstofollow']
+    return render_template('loggedin_home.html', username=session['username'])
+    
