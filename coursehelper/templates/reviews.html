@@ -17,10 +17,10 @@
             <!--<a class="navbar-brand" href="#">
             <img alt="Brand" src="{{ url_for('static',filename='img/letter-C-blue-icon.png') }}">
             </a>-->
-            <a class="navbar-brand" href="#">CourseHelper</a>
+            <a class="navbar-brand" href="/">CourseHelper</a>
         </div>
       <ul class="nav navbar-nav">
-        <li><a href="#">Course Feed </a></li>
+        <li><a href="/courses/{{courseid}}/">Course Feed </a></li>
         <li><a href="#">Resources</a></li>
         <li class="active"><a href="/reviews">Reviews<span class="sr-only">(current)</span></a></li>
       </ul>
@@ -41,6 +41,9 @@
       function onSubmitSearch()
       {
          var x = document.getElementById("searchtxt").value;
+         if( x.trim() == "") {
+          return false;
+         }
          var str1 = "/courses/";
          var query = str1.concat(x);
          // console.log(query);

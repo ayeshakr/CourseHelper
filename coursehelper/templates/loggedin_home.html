@@ -27,7 +27,7 @@
             <!--<a class="navbar-brand" href="#">
             <img alt="Brand" src="{{ url_for('static',filename='img/letter-C-blue-icon.png') }}">
             </a>-->
-            <a class="navbar-brand" href="#">CourseHelper</a>
+            <a class="navbar-brand" href="/">CourseHelper</a>
         </div>
       <ul class="nav navbar-nav">
         <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
@@ -50,6 +50,9 @@
       function onSubmitSearch()
       {
          var x = document.getElementById("searchtxt").value;
+         if( x.trim() == "") {
+          return false;
+         }
          var str1 = "/courses/";
          var query = str1.concat(x);
          // console.log(query);
@@ -68,7 +71,7 @@
                 Here are the courses you're following:
                 <ul>
                 {% for course in courses %}
-                <li> course </li>
+                <li> <a href="/courses/{{course.courseid}}"> {{course.courseid}} </a></li>
                 {% endfor %}
                 {% else %}
                 <br>

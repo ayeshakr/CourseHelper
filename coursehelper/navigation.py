@@ -2,6 +2,7 @@ import re
 import yaml
 import datetime
 import sqlite3
+import collections
 
 from database import get_db, query_db
 from sqlite3 import IntegrityError, Row
@@ -11,6 +12,17 @@ def dict_factory(cursor, row):
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
+
+def convertToString(data):
+	if isinstance(data, basestring):
+		return str(data)
+	elif isinstance(data, collections.Mapping):
+		return dict(map(convertToString, data.iteritems()))
+	elif isinstance(data, collections.Iterable):
+		return type(data)(map(convertToString, data))
+	else:
+		return data
+
 
 def regexCheck(searchQuery):
 	return re.match(r'^[a-zA-Z]{4}\s?[0-9]{3}([a-zA-Z]\d)?$', searchQuery)
@@ -47,18 +59,18 @@ def getCoursePosts(courseID):
 
 	if regexCheck(courseID):
 		query = formatQuery(courseID)
-		print "Asking for posts for course: " + query 
+		#print "Asking for posts for course: " + query 
 		
 		db = get_db()
 		db.row_factory = dict_factory
 
 		result = query_db('SELECT * FROM posts WHERE courseid = (?)', (query, ) , one=False)
 
-		print "Received: " + str(result)
+		#print "Received: " + str(result)
 
 		if not result is None:
 			for desc in result:
-				print "checking : " + str(desc)
+				#print "checking : " + str(desc)
 				coursePosts.append(desc)
 
 	return coursePosts
@@ -73,7 +85,7 @@ def checkValidPost(post):
 
 def addPostAttempt(request, session):
 	post = request.form['post']
-	courseid = request.form['courseid']
+	courseid = formatQuery(request.form['courseid'])
 	print "Wants to add Post: " + post + " to Course : " + courseid
 
 	error = checkValidPost(post)
@@ -97,3 +109,69 @@ def addPostAttempt(request, session):
 		return error
 
 	return error
+
+
+def followCourseAttempt(request, session):
+	follow = request.form['wantstofollow']
+	courseid = request.form['courseid']
+	username = session['username']
+
+	error = None
+	
+	try:
+		db = get_db()
+
+		if follow == "true":
+			db.execute('INSERT INTO coursefollowers (userid, courseid) VALUES (?, ?)', [username, courseid])
+			db.commit()
+		else:
+			db.execute('DELETE FROM coursefollowers WHERE userid=? AND courseid=?', [username, courseid])
+			db.commit()
+	except Error:
+		db.rollback()
+		error = "Invalid attempt!"
+		print error
+
+	return error
+
+
+def checkIfFollowing(courseid, username):
+	following = False
+	db = get_db()
+
+	checkCourse = formatQuery(courseid)
+
+	print "Checking if " + username + " follows course: " + checkCourse
+	try:
+		result = query_db('SELECT * FROM coursefollowers WHERE userid=(?) AND courseid=(?)', (username, checkCourse, ) , one=True)
+		print "Found: " + str(result)
+		if not result is None:
+			following = True
+
+	except IntegrityError:
+		db.rollback()
+
+	print "returning " + str(following)
+	return following
+
+
+def getCoursesFollowed(username):
+	coursesFollowed = []
+	db = get_db()
+	db.row_factory = dict_factory
+
+	print "Checking the courses user: " + username + " follows"
+	
+	coursesFound = query_db('SELECT * FROM coursefollowers WHERE userid = (?)', (username, ) , one=False)
+
+	if not coursesFound is None:
+			for course in coursesFound:
+				print "checking : " + str(course)
+				coursesFollowed.append(course)
+
+	print "returning: " + str(convertToString(coursesFollowed))
+	return coursesFollowed
+
+
+
+

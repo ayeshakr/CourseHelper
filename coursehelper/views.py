@@ -10,7 +10,9 @@ from flask import redirect, render_template, url_for, abort, flash, request, ses
 def index():
     print 'hello'
     if session.get('logged_in'):
-        return render_template("loggedin_home.html", username=session['username'])
+        username = session['username']
+        coursesFollowed = navigation.getCoursesFollowed(username)
+        return render_template("loggedin_home.html", username=username, courses=coursesFollowed)
 
     return render_template("index.html")
 
@@ -61,37 +63,26 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/courses/<courseid>/', methods=['GET','POST'])
+@app.route('/courses/<courseid>/')
 def coursepage(courseid):
-    #print "Course ID is = " + courseid
+    if not courseid.strip():
+        return redirect(url_for('index'))
 
     # Lookup the database for the passed query
     courseInfo = navigation.getCourseInfo(courseid)
 
-    #print courseInfo
-
     # If no course was found, return user to their main profile page
     if not courseInfo:
-        return render_template("loggedin_home.html", username=session['username'])
+        return redirect(url_for('index'))
 
     # If a valid course was entered, fetch the posts associated with it and render its page
     else:
-        # added following=False for testing - remove and replace with info from DB instead
         coursePosts = navigation.getCoursePosts(courseid)
-        return render_template("coursepg.html", following=False, courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'], posts=coursePosts)
+        isFollowing = navigation.checkIfFollowing(courseid, session['username'])
 
-    return render_template("loggedin_home.html", username=session['username'])
-    
-    # posts = []
-    # post = {}
-    # post['user'] = 'xxx'
-    # post['post'] = "Does anyone know what textbook chapters we need for the midterm?"
-    # post['timestamp'] = datetime.date.today()
-    # posts.append(post)
-    # return render_template("coursepg.html", courseid=courseid, coursetitle="Principles of Web Development",
-    #     coursedesc='''Computer Science (Sci) : The course discusses the major principles, algorithms,
-    #     languages and technologies that underlie web development. Students receive practical 
-    #     hands-on experience through a project.''', posts=posts)
+        return render_template("coursepg.html", courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'], posts=coursePosts, following=isFollowing)
+
+    return redirect(url_for('index'))
 
 
 @app.route('/addpost', methods=['GET', 'POST'])
@@ -107,28 +98,35 @@ def addPost():
         return redirect(url_for('coursepage', courseid=courseid))
 
     else:
-        return redirect(url_for('coursepage', courseid=courseid))
+        return redirect(url_for('index'))
 
 
 @app.route('/courses/<courseid>/reviews')
 def reviewspage(courseid):
     
     courseInfo = navigation.getCourseInfo(courseid)
-
     #print courseInfo
 
     # If no course was found, return user to their main profile page
     if not courseInfo:
-        return render_template("loggedin_home.html", username=session['username'])
+        return redirect(url_for('index'))
 
     # If a valid course was entered, fetch the posts associated with it and render its page
     else:
         coursePosts = navigation.getCoursePosts(courseid)
         return render_template("reviews.html", courseid=courseInfo['name'], coursetitle=courseInfo['title'], coursedesc=courseInfo['description'])
 
-@app.route('/followcourse', methods=['GET','POST'])
-def followcourse():
-    #test fn
-    print request.form['wantstofollow']
-    return render_template('loggedin_home.html', username=session['username'])
-    
+
+@app.route('/followcourse', methods=['GET', 'POST'])
+def followCourse():
+
+    if request.method == 'POST':
+        error = navigation.followCourseAttempt(request, session)
+        courseid = request.form['courseid']
+
+        # add error handling?
+        return redirect(url_for('coursepage', courseid=courseid))
+
+    else:
+        return redirect(url_for('index'))
+
