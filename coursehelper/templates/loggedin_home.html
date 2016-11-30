@@ -10,6 +10,9 @@
       function OnSubmitForm()
       {
          var search = document.getElementById("searchtxt");
+         if( x.trim() == "") {
+ +          return false;
+ +         }
          var str1 = "/courses/";
          document.searchform.action = str1.concat(search,"/");
          return true;
