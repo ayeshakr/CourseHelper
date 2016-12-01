@@ -104,16 +104,16 @@
               </div>
             </form>
             {% endif %}
+            <hr>
             <br>
             <div class="panel">
               <div class="panel-body">
-                <h3><u>Reviews</u></h3>
                   <h4><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add a review - Let people know what you think of this course! Reviews are anonymous.</h4>
                   <div class="panel-transp">
                   <form id="reg" method="post" class="form-horizontal" action="/addreview">
 
                     <div class="form-group">
-                    <input name="stars" id="input-21d" value="2" type="number" class="rating" min=0 max=5 step=1 >
+                    <input name="stars" id="input-21d" value="2" type="number" class="rating" min=0 max=5 step=1 data-size="xs">
                     <!-- <input id="input-21d" value="4" type="number" class="rating" data-size="xs" readonly="true"> -->
                      </div>
                       <!--<input type="text" name="post" class="form-control input-sm" id="inputlg" class="form-control" placeholder="Your review goes here!">-->
@@ -131,6 +131,8 @@
 
                     </form>
                     </div>
+                <hr>
+                <h3><u>Reviews</u></h3>    
                 {% for review in reviews %}
                 <div class="panel-small">
                   <div class="panel-body">
@@ -144,7 +146,7 @@
                      <div class="form-group">
                      <input type="hidden" name="reviewid" value="{{ review.reviewid }}">
                      <input type="hidden" name="courseid" value="{{ courseid }}">
-                     <button type="submit" value="Delete" class=" btn btn-transp btn btn-transp"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+                     <button type="submit" value="Delete" class=" btn btn-no-outline"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                      </div>
                      </form>
                     {% endif %}
