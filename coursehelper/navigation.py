@@ -37,12 +37,11 @@ def formatQuery(searchQuery):
 	return query
 
 def getCourseInfo(courseID):
-	print "TEST"
 	courseInfo = {}
 
 	if regexCheck(courseID):
 		query = formatQuery(courseID)
-		print "Searching for : " + query
+		#print "Searching for : " + query
 
 		db = get_db()
 		db.row_factory = Row
@@ -83,10 +82,18 @@ def checkValidPost(post):
 
 	return error
 
+def checkValidReview(review):
+	error = None
+
+	if len(review) < 5:
+		error = "Error! Post must contain at least 5 characters"
+
+	return error
+
 def addPostAttempt(request, session):
 	post = request.form['post']
 	courseid = formatQuery(request.form['courseid'])
-	print "Wants to add Post: " + post + " to Course : " + courseid
+	#print "Wants to add Post: " + post + " to Course : " + courseid
 
 	error = checkValidPost(post)
 
@@ -113,7 +120,7 @@ def addPostAttempt(request, session):
 
 def followCourseAttempt(request, session):
 	follow = request.form['wantstofollow']
-	courseid = request.form['courseid']
+	courseid = formatQuery(request.form['courseid'])
 	username = session['username']
 
 	error = None
@@ -141,17 +148,16 @@ def checkIfFollowing(courseid, username):
 
 	checkCourse = formatQuery(courseid)
 
-	print "Checking if " + username + " follows course: " + checkCourse
+	#print "Checking if " + username + " follows course: " + checkCourse
 	try:
 		result = query_db('SELECT * FROM coursefollowers WHERE userid=(?) AND courseid=(?)', (username, checkCourse, ) , one=True)
-		print "Found: " + str(result)
+		#print "Found: " + str(result)
 		if not result is None:
 			following = True
 
 	except IntegrityError:
 		db.rollback()
 
-	print "returning " + str(following)
 	return following
 
 
@@ -160,18 +166,130 @@ def getCoursesFollowed(username):
 	db = get_db()
 	db.row_factory = dict_factory
 
-	print "Checking the courses user: " + username + " follows"
+	#print "Checking the courses user: " + username + " follows"
 	
 	coursesFound = query_db('SELECT * FROM coursefollowers WHERE userid = (?)', (username, ) , one=False)
 
 	if not coursesFound is None:
 			for course in coursesFound:
-				print "checking : " + str(course)
 				coursesFollowed.append(course)
 
-	print "returning: " + str(convertToString(coursesFollowed))
+	#print "returning: " + str(convertToString(coursesFollowed))
 	return coursesFollowed
 
+
+def addReviewAttempt(request, session):
+	review = request.form['review']
+	courseid = formatQuery(request.form['courseid'])
+	
+	#print "Wants to add review: " + review + " to Course : " + courseid
+	error = checkValidReview(review)
+
+	if not error is None:
+		print error
+		return error
+
+	username = session['username']
+	timestamp = datetime.datetime.now().strftime("%H:%M %Y-%m-%d")
+	stars = request.form['stars']
+	print "Stars is : " + str(stars)
+
+	db = get_db()
+
+	try:
+		db.execute('INSERT INTO reviews (tstamp, courseid, userid, review, stars) VALUES (?, ?, ?, ?, ?)', [timestamp, courseid, username, review, stars])
+		db.commit()
+    #if not, redirect user to registration page
+	except IntegrityError:
+		db.rollback()
+		error = "Invalid Entry!"
+		print error
+		return error
+
+	return error
+
+
+def getCourseReviews(courseID):
+	courseReviews = []
+
+	if regexCheck(courseID):
+		query = formatQuery(courseID)
+		#print "Asking for posts for course: " + query 
+		
+		db = get_db()
+		db.row_factory = dict_factory
+
+		result = query_db('SELECT * FROM reviews WHERE courseid = (?)', (query, ) , one=False)
+
+		print "Received: " + str(result)
+
+		if not result is None:
+			for desc in result:
+				#print "checking : " + str(desc)
+				courseReviews.append(desc)
+
+	return courseReviews
+
+
+def checkIfUserExists(username):
+	exists = False
+
+	db = get_db()
+	userInfo = query_db('SELECT * FROM users WHERE username = ?', (username, ) , one=True)
+
+	if not userInfo is None:
+		exists = True
+
+	return exists
+
+
+def deletePostAttempt(request, session):
+	username = session['username']
+	postid = request.form['postid']
+	error = None
+
+	db = get_db()
+
+	try:
+		db.execute('DELETE FROM posts WHERE userid=? AND postid=?', [username, postid])
+		db.commit()
+	except IntegrityError:
+		error = "Error! Invalid attempt"
+		print error
+
+	return error
+
+
+def deleteReviewAttempt(request, session):
+	username = session['username']
+	reviewid = request.form['reviewid']
+	error = None
+
+	db = get_db()
+
+	try:
+		db.execute('DELETE FROM reviews WHERE userid=? AND reviewid=?', [username, reviewid])
+		db.commit()
+	except IntegrityError:
+		error = "Error! Invalid attempt"
+		print error
+
+	return error
+
+
+def getCourseResources(courseid):
+
+	db = get_db()
+	db.row_factory = dict_factory
+
+	resources = query_db('SELECT * FROM resources WHERE courseid = (?)', (courseid, ) , one=False)
+
+	if resources is None:
+		resources = {}
+
+	print resources
+
+	return resources
 
 
 

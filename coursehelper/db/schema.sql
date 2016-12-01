@@ -11,7 +11,7 @@ CREATE TABLE courses (
 );
 DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
-	rid TEXT PRIMARY KEY,
+	reviewid INTEGER PRIMARY KEY AUTOINCREMENT,
 	tstamp TEXT NOT NULL,
 	courseid TEXT NOT NULL,
 	userid TEXT NOT NULL,
@@ -31,6 +31,16 @@ CREATE TABLE posts (
 	courseid TEXT NOT NULL,
 	parentid TEXT,
 	post TEXT NOT NULL,
+	tstamp TEXT NOT NULL
+);
+DROP TABLE IF EXISTS resources;
+CREATE TABLE resources (
+	resoureid INTEGER PRIMARY KEY AUTOINCREMENT,
+	userid TEXT NOT NULL,
+	courseid TEXT NOT NULL,
+	title TEXT NOT NULL,
+	url TEXT NOT NULL,
+	description TEXT,
 	tstamp TEXT NOT NULL
 )
 
